@@ -1,5 +1,7 @@
 #include "pieces.h"
 
+
+
 using namespace std;
 class boardSpace {
 public:
@@ -7,6 +9,9 @@ public:
 	int index;
 	int row;
 	int column;
+
+	bool underAttack;
+
 	
 	bool isWhite = false;
 	float vertex1[2];
@@ -29,7 +34,7 @@ class board {
 public:
 	boardSpace spaces[64];
 	int numSquaresToEdge[64][8];
-	int kingMoves[64][8];
+	Move kingMoves[64][8];
 	int directionOffsets[8] = {
 		8,
 		-8,
@@ -41,8 +46,12 @@ public:
 		-9,
 	};
 	bool whitesTurn = true;
-	void PrecomputeSquareEdges() {
+	void PrecomputeMoves() {
 		for (int i = 0; i < 64; i++) {
+			int y = i / 8;
+			int x = i - y * 8;
+
+			//First precompute how many squares to the edge from each square
 			int north = 7 - spaces[i].row;
 			int south = spaces[i].row;
 			int west = spaces[i].column;
@@ -56,6 +65,22 @@ public:
 			numSquaresToEdge[i][5] = min(south, east);
 			numSquaresToEdge[i][6] = min(north, east);
 			numSquaresToEdge[i][7] = min(south, west);
+
+			//Precompute legal king moves (Exluding castling)
+			for (int j = 0; j < 8; j++) {
+				int kingMoveSquare = i + directionOffsets[j];
+				if (kingMoveSquare >= 0 && kingMoveSquare < 64) {
+					int kingSquareY = kingMoveSquare / 8;
+					int kingSquareX = kingMoveSquare - kingSquareY * 8;
+					int maxCoordMoveDst = max(abs(x - kingSquareX), abs(y - kingSquareY));
+					if (maxCoordMoveDst == 1) {
+						Move move;
+						move.StartSquare = i;
+						move.TargetSquare = kingMoveSquare;
+						kingMoves[i][j] = move;
+					}
+				}
+			}
 
 			
 		}

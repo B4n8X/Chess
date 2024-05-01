@@ -1,11 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <list>
+#include <math.h>
+#include <corecrt_math.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #include "config.h"
+#include "movegenerator.h"
 #include "board.h"
-
 #include "montecarlo.h"
 
 using namespace std;
@@ -18,7 +21,7 @@ int main(void)
     board chessBoard;
     chessBoard.createBoard();
     chessBoard.createPieces(cfg.boardStartPieces, cfg.boardStartSide);
-    chessBoard.PrecomputeSquareEdges();
+    chessBoard.PrecomputeMoves();
 
     /* Initialize the library */
     if (!glfwInit())

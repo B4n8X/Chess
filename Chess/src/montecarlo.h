@@ -1,14 +1,6 @@
-#include <list>
-
-
-class Move {
-public:
-	int StartSquare;
-	int TargetSquare;
-};
-
 class MCTS_Node {
 private:
+	MoveGenerator mg;
 	int parentAction;
 	double score;
 	int numberOfVisits = 0;
@@ -26,26 +18,6 @@ public:
 	bool isGameOver() {
 		return false;
 	}
-	void generateKingMoves(board Board, int startSquare, Piece piece) {
-		return;
-	}
-	void generateSlidingMoves(board Board, int startSquare, Piece piece) {
-		Move move;
-		for (int directionIndex = 0; directionIndex < 8; directionIndex++) {
-			for (int n = 0; n < Board.numSquaresToEdge[startSquare][directionIndex]; n++) {
-				int targetSquare = startSquare + Board.directionOffsets[directionIndex] * (n + 1);
-				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-				if (piece.isWhite == targetSquarePiece.isWhite) {
-					break;
-				}
-				bool isCapture = targetSquarePiece.type != 0;
-				move.StartSquare = startSquare;
-				move.TargetSquare = targetSquare;
-				cout << "Pushed";
-				untried_Actions.push_back(move);
-			}
-		}
-	}
 	void getLegalActions(board Board) {
 		for (int i = 0; i < 64; i++) {
 			Piece piece = Board.spaces[i].piece;
@@ -56,19 +28,43 @@ public:
 			case 1:
 				break;
 			case 2:
-				generateKingMoves(Board, i, piece);
+			{
+				std::list<Move> moves = mg.generateKingMoves(Board, i, piece);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
+			}
 			case 3:
-				generateSlidingMoves(Board, i, piece);
+			{
+				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
+			}
 			case 4:
 				break;
 			case 5:
-				generateSlidingMoves(Board, i, piece);
+			{
+				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
+			}
 			case 6:
-				generateSlidingMoves(Board, i, piece);
+			{
+				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
+			}
 			default:
 				break;
 			}

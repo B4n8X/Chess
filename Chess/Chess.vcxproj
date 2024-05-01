@@ -137,6 +137,7 @@
     <ClInclude Include="src\board.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\montecarlo.h" />
+    <ClInclude Include="src\movegenerator.h" />
     <ClInclude Include="src\pieces.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
