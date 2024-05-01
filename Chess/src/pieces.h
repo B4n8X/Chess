@@ -13,10 +13,11 @@ public:
 	int type = 5;
 	/*
 	Sides:
-	false = Black
-	true = White
+	0 = black
+	1 = White
+	2 = Empty
 	*/
-	bool isWhite = true;
+	int side = 2;
 	/*
 	Position:
 	(column, row)

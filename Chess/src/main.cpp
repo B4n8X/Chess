@@ -7,8 +7,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #include "config.h"
-#include "movegenerator.h"
+#include "move.h"
 #include "board.h"
+#include "movegenerator.h"
 #include "montecarlo.h"
 
 using namespace std;

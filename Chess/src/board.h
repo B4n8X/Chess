@@ -1,7 +1,5 @@
 #include "pieces.h"
 
-
-
 using namespace std;
 class boardSpace {
 public:
@@ -10,9 +8,9 @@ public:
 	int row;
 	int column;
 
-	bool underAttack;
+	bool underWhiteAttack;
+	bool underBlackAttack;
 
-	
 	bool isWhite = false;
 	float vertex1[2];
 	float vertex2[2];
@@ -88,12 +86,7 @@ public:
 	void createPieces(int *types, int *side) {
 		for (int i = 0; i < 64; i++) {
 			spaces[i].piece.type = types[i];
-			if (side[i] == 1) {
-				spaces[i].piece.isWhite = true;
-			}
-			else {
-				spaces[i].piece.isWhite = false;
-			}
+			spaces[i].piece.side = side[i];
 		}
 	}
 	void createBoard() {
@@ -142,7 +135,7 @@ public:
 			unsigned char* data;
 			switch (spaces[i].piece.type) {
 			case 1:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackpawn.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
@@ -150,7 +143,7 @@ public:
 				}
 				break;
 			case 2:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackking.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
@@ -158,7 +151,7 @@ public:
 				}
 				break;
 			case 3:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackbishop.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
@@ -166,7 +159,7 @@ public:
 				}
 				break;
 			case 4:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackknight.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
@@ -174,7 +167,7 @@ public:
 				}
 				break;
 			case 5:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackrook.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
@@ -182,7 +175,7 @@ public:
 				}
 				break;
 			case 6:
-				if (spaces[i].piece.isWhite == false) {
+				if (spaces[i].piece.side == 0) {
 					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackqueen.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
