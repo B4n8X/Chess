@@ -4,8 +4,12 @@ private:
 		return false;
 	}
 public:
+	std::list<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
+		std::list<Move> m;
+		return m;
+	}
 	std::list<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir) {
-		std::list<Move> moves;
+		std::list<Move> m;
 		for (int directionIndex = startDir; directionIndex < endDir; directionIndex++) {
 			for (int n = 0; n < Board.numSquaresToEdge[startSquare][directionIndex]; n++) {
 				Move move;
@@ -18,10 +22,10 @@ public:
 				move.StartSquare = startSquare;
 				move.TargetSquare = targetSquare;
 				//cout << "Square: " << targetSquare;
-				moves.push_back(move);
+				m.push_back(move);
 			}
 		}
-		return moves;
+		return m;
 	}
 	std::list<Move> generateKingMoves(board Board, int startSquare, Piece piece) {
 		std::list<Move> m;
@@ -32,7 +36,7 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
-				cout << " " << targetSquare << " ";
+				
 				bool isCapture = piece.side != targetSquarePiece.side;
 				if (piece.side == 1) {
 					if (!Board.spaces[targetSquare].underBlackAttack) {
@@ -58,18 +62,22 @@ public:
 	std::list<Move> generateKnightMoves(board Board, int startSquare, Piece piece) {
 		std::list<Move> m;
 		if (isPinned(Board, startSquare)) {
-			return;
+			return m;
 		}
+		//cout << "From: " << startSquare << " \n";
 		for (int n = 0; n < 8; n++) {
 			int targetSquare = Board.knightMoves[startSquare][n].TargetSquare;
-			Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-			if (piece.side == targetSquarePiece.side) /*OR IF IN CHECK AND KNIGHT IS NOT BLOCKING CHECK OR CAPTURING CHECKING PIECE(ADD PLAYER.H WITH PLAYER STATUS OR UNDER BOARD ADD PLAYERTURNS AND STATUSES, LIKE A STRUCT)*/ {
-				continue;
+			if (targetSquare >= 0 && targetSquare < 64) {
+				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
+				if (piece.side == targetSquarePiece.side) /*OR IF IN CHECK AND KNIGHT IS NOT BLOCKING CHECK OR CAPTURING CHECKING PIECE(ADD PLAYER.H WITH PLAYER STATUS OR UNDER BOARD ADD PLAYERTURNS AND STATUSES, LIKE A STRUCT)*/ {
+					continue;
+				}
+				//cout << "to: " << targetSquare << " \n";
+				Move move;
+				move.StartSquare = startSquare;
+				move.TargetSquare = targetSquare;
+				m.push_back(move);
 			}
-			Move move;
-			move.StartSquare = startSquare;
-			move.TargetSquare = targetSquare;
-			m.push_back(move);
 		}
 		return m;
 	}

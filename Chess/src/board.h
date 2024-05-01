@@ -65,7 +65,7 @@ public:
 			numSquaresToEdge[i][6] = min(north, east);
 			numSquaresToEdge[i][7] = min(south, west);
 
-			int knightMoveOffset[] = {15, 17, -17, -15, 10, -6, -6, -10};
+			int knightMoveOffset[] = {15, 17, -17, -15, 10, 6, -6, -10};
 			//Precompute legal knight moves
 			for (int j = 0; j < 8; j++) {
 				int knightMoveSquare = i + knightMoveOffset[j];

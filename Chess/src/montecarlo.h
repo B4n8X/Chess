@@ -26,7 +26,10 @@ public:
 			case 0:
 				continue;
 			case 1:
+			{
+				std::list<Move> moves = mg.generatePawnMoves(Board, i, piece);
 				break;
+			}
 			case 2:
 			{
 				std::list<Move> moves = mg.generateKingMoves(Board, i, piece);
