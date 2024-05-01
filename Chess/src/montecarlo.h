@@ -46,7 +46,14 @@ public:
 				break;
 			}
 			case 4:
+			{
+				std::list<Move> moves = mg.generateKnightMoves(Board, i, piece);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
+			}
 			case 5:
 			{
 				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);

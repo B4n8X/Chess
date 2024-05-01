@@ -33,7 +33,8 @@ public:
 	boardSpace spaces[64];
 	int numSquaresToEdge[64][8];
 	Move kingMoves[64][8];
-	int directionOffsets[8] = {
+	Move knightMoves[64][8];
+	int directionOffsets[8] = { //Direction offsets for sliding pieces
 		8,
 		-8,
 		-1,
@@ -63,6 +64,23 @@ public:
 			numSquaresToEdge[i][5] = min(south, east);
 			numSquaresToEdge[i][6] = min(north, east);
 			numSquaresToEdge[i][7] = min(south, west);
+
+			int knightMoveOffset[] = {15, 17, -17, -15, 10, -6, -6, -10};
+			//Precompute legal knight moves
+			for (int j = 0; j < 8; j++) {
+				int knightMoveSquare = i + knightMoveOffset[j];
+				if (knightMoveSquare >= 0 && knightMoveSquare < 64) {
+					int knightSquareY = knightMoveSquare / 8;
+					int knightSquareX = knightMoveSquare - knightSquareY * 8;
+					int maxCoordMoveDst = max(abs(x - knightSquareX), abs(y - knightSquareY));
+					if (maxCoordMoveDst == 2) {
+						Move move;
+						move.StartSquare = i;
+						move.TargetSquare = knightMoveSquare;
+						knightMoves[i][j] = move;
+					}
+				}
+			}
 
 			//Precompute legal king moves (Exluding castling)
 			for (int j = 0; j < 8; j++) {
