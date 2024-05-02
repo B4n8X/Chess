@@ -3,8 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <list>
+#include <vector>
 #include <math.h>
 #include <corecrt_math.h>
+#include <stdlib.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #include "config.h"
@@ -14,6 +16,9 @@
 #include "montecarlo.h"
 
 using namespace std;
+
+MCTS_Node::MCTS_Node(MCTS_Node *parent, board state, Move parentMove) : nodeParent(parent), State(state), nodeParentMove(parentMove)  {
+}
 
 int main(void)
 {
@@ -50,7 +55,7 @@ int main(void)
         
         chessBoard.drawBoard();
         chessBoard.drawPieces();
-        montecarlo.bestAction(chessBoard);
+        montecarlo.bestAction(chessBoard, cfg.simCount);
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 

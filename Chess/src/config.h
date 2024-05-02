@@ -1,5 +1,6 @@
 class config {
 public:
+	const int simCount = 100;
 	const int screenWidth = 720;
 	const int screenHeight = 720;
 	int boardStartPieces[64] = {5,4,3,6,2,3,4,5,
