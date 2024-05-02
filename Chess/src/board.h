@@ -34,6 +34,8 @@ public:
 	int numSquaresToEdge[64][8];
 	Move kingMoves[64][8];
 	Move knightMoves[64][8];
+	Move whitePawnMoves[64][3];
+	Move blackPawnMoves[64][3];
 	int directionOffsets[8] = { //Direction offsets for sliding pieces
 		8,
 		-8,
@@ -69,7 +71,9 @@ public:
 			//Precompute legal knight moves
 			for (int j = 0; j < 8; j++) {
 				int knightMoveSquare = i + knightMoveOffset[j];
+				
 				if (knightMoveSquare >= 0 && knightMoveSquare < 64) {
+					//cout << knightMoveSquare + " \n";
 					int knightSquareY = knightMoveSquare / 8;
 					int knightSquareX = knightMoveSquare - knightSquareY * 8;
 					int maxCoordMoveDst = max(abs(x - knightSquareX), abs(y - knightSquareY));
@@ -78,6 +82,38 @@ public:
 						move.StartSquare = i;
 						move.TargetSquare = knightMoveSquare;
 						knightMoves[i][j] = move;
+					}
+				}
+			}
+
+			//Precompute legal pawn moves (Excluding double pawn moves)
+			int whitePawnMoveOffsets[] = { 7,8,9 };
+			int blackPawnMoveOffsets[] = { -7,-8,-9 };
+			for (int j = 0; j < 3; j++) {
+				int pawnMoveSquareWhite = i + whitePawnMoveOffsets[j];
+				
+				int pawnMoveSquareBlack = i + blackPawnMoveOffsets[j];
+				if (pawnMoveSquareWhite >= 0 && pawnMoveSquareWhite < 64) {
+					int pawnMoveSquareY = pawnMoveSquareWhite / 8;
+					int pawnMoveSquareX = pawnMoveSquareWhite - pawnMoveSquareY * 8;
+					int maxCoordMoveDst = max(abs(x - pawnMoveSquareX), abs(y - pawnMoveSquareY));
+					if (maxCoordMoveDst == 1) {
+						Move move;
+						move.StartSquare = i;
+						//cout << pawnMoveSquareWhite << endl;
+						move.TargetSquare = pawnMoveSquareWhite;
+						whitePawnMoves[i][j] = move;
+					}
+				}
+				if (pawnMoveSquareBlack >= 0 && pawnMoveSquareBlack < 64) {
+					int pawnMoveSquareY = pawnMoveSquareBlack / 8;
+					int pawnMoveSquareX = pawnMoveSquareBlack - pawnMoveSquareY * 8;
+					int maxCoordMoveDst = max(abs(x - pawnMoveSquareX), abs(y - pawnMoveSquareY));
+					if (maxCoordMoveDst == 1) {
+						Move move;
+						move.StartSquare = i;
+						move.TargetSquare = pawnMoveSquareBlack;
+						blackPawnMoves[i][j] = move;
 					}
 				}
 			}
@@ -154,50 +190,50 @@ public:
 			switch (spaces[i].piece.type) {
 			case 1:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackpawn.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackpawn.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whitepawn.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whitepawn.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			case 2:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackking.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackking.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whiteking.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whiteking.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			case 3:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackbishop.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackbishop.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whitebishop.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whitebishop.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			case 4:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackknight.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackknight.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whiteknight.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whiteknight.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			case 5:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackrook.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackrook.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whiterook.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whiterook.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			case 6:
 				if (spaces[i].piece.side == 0) {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/blackqueen.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/blackqueen.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				else {
-					data = stbi_load("C:/Users/zagiz/Desktop/Programming/Chess/Resources/textures/whitequeen.png", &width, &height, 0, STBI_rgb_alpha);
+					data = stbi_load("../Resources/textures/whitequeen.png", &width, &height, 0, STBI_rgb_alpha);
 				}
 				break;
 			default:

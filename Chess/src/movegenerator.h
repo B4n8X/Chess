@@ -6,6 +6,45 @@ private:
 public:
 	std::list<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
 		std::list<Move> m;
+
+		cout << "From: " << startSquare << " \n";
+		for (int n = 0; n < 3; n++) {
+			int targetSquare = 1;
+			if (piece.side == 0) {
+				targetSquare = Board.blackPawnMoves[startSquare][n].TargetSquare;
+				
+			}
+			else if (piece.side == 1) {
+				targetSquare = Board.whitePawnMoves[startSquare][n].TargetSquare;
+			}
+			//cout << targetSquare << endl;
+			
+			if (targetSquare >= 0 && targetSquare < 64) {
+				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
+				if (piece.side == targetSquarePiece.side) {
+					continue;
+				}
+				else if((targetSquare-startSquare) % 8 != 0) {
+					if (targetSquarePiece.side != piece.side) {
+						if (targetSquarePiece.side == 2) {
+							continue;
+						}
+						cout << "Cornerere to: " << targetSquare << " \n";
+						Move move;
+						move.StartSquare = startSquare;
+						move.TargetSquare = targetSquare;
+						m.push_back(move);
+					}
+					continue;
+				}
+				cout << "Not cornerer to: " << targetSquare << " \n";
+				Move move;
+				move.StartSquare = startSquare;
+				move.TargetSquare = targetSquare;
+				m.push_back(move);
+			}
+			
+		}
 		return m;
 	}
 	std::list<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir) {
