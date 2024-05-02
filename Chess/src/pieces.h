@@ -25,5 +25,9 @@ public:
 	row = 0-8
 	*/
 	int position[2];
-	bool isPinned;
+	struct Flags {
+		bool pawnDoubleMove = false;
+
+	};
+	Flags flags;
 };

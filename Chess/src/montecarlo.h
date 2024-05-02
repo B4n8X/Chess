@@ -28,6 +28,10 @@ public:
 			case 1:
 			{
 				std::list<Move> moves = mg.generatePawnMoves(Board, i, piece);
+				for (int i = 0; i < moves.size(); i++) {
+					untried_Actions.push_back(moves.back());
+					moves.pop_back();
+				}
 				break;
 			}
 			case 2:

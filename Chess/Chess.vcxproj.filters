@@ -41,5 +41,8 @@
     <ClInclude Include="src\move.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="players.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

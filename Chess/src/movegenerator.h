@@ -8,8 +8,9 @@ public:
 		std::list<Move> m;
 
 		cout << "From: " << startSquare << " \n";
-		for (int n = 0; n < 3; n++) {
-			int targetSquare = 1;
+
+		for (int n = 0; n < 4; n++) {
+			int targetSquare;
 			if (piece.side == 0) {
 				targetSquare = Board.blackPawnMoves[startSquare][n].TargetSquare;
 				
@@ -37,11 +38,15 @@ public:
 					}
 					continue;
 				}
-				cout << "Not cornerer to: " << targetSquare << " \n";
-				Move move;
-				move.StartSquare = startSquare;
-				move.TargetSquare = targetSquare;
-				m.push_back(move);
+				if(targetSquarePiece.type == 0){
+					
+					cout << "Not cornerer to: " << targetSquare << " \n";
+					Move move;
+					move.StartSquare = startSquare;
+					move.TargetSquare = targetSquare;
+					m.push_back(move);
+				}
+				
 			}
 			
 		}

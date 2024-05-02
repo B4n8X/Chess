@@ -34,8 +34,8 @@ public:
 	int numSquaresToEdge[64][8];
 	Move kingMoves[64][8];
 	Move knightMoves[64][8];
-	Move whitePawnMoves[64][3];
-	Move blackPawnMoves[64][3];
+	Move whitePawnMoves[64][4];
+	Move blackPawnMoves[64][4];
 	int directionOffsets[8] = { //Direction offsets for sliding pieces
 		8,
 		-8,
@@ -86,10 +86,10 @@ public:
 				}
 			}
 
-			//Precompute legal pawn moves (Excluding double pawn moves)
-			int whitePawnMoveOffsets[] = { 7,8,9 };
-			int blackPawnMoveOffsets[] = { -7,-8,-9 };
-			for (int j = 0; j < 3; j++) {
+			//Precompute legal pawn moves
+			int whitePawnMoveOffsets[] = { 7,8,9,16 };
+			int blackPawnMoveOffsets[] = { -7,-8,-9,-16 };
+			for (int j = 0; j < 4; j++) {
 				int pawnMoveSquareWhite = i + whitePawnMoveOffsets[j];
 				
 				int pawnMoveSquareBlack = i + blackPawnMoveOffsets[j];
@@ -97,23 +97,44 @@ public:
 					int pawnMoveSquareY = pawnMoveSquareWhite / 8;
 					int pawnMoveSquareX = pawnMoveSquareWhite - pawnMoveSquareY * 8;
 					int maxCoordMoveDst = max(abs(x - pawnMoveSquareX), abs(y - pawnMoveSquareY));
-					if (maxCoordMoveDst == 1) {
-						Move move;
-						move.StartSquare = i;
-						//cout << pawnMoveSquareWhite << endl;
-						move.TargetSquare = pawnMoveSquareWhite;
-						whitePawnMoves[i][j] = move;
+					if(j < 3){
+						if (maxCoordMoveDst == 1) {
+							Move move;
+							move.StartSquare = i;
+							//cout << pawnMoveSquareWhite << endl;
+							move.TargetSquare = pawnMoveSquareWhite;
+							whitePawnMoves[i][j] = move;
+						}
+					}
+					else {
+						if (maxCoordMoveDst == 2) {
+							Move move;
+							move.StartSquare = i;
+							move.TargetSquare = pawnMoveSquareWhite;
+							whitePawnMoves[i][j] = move;
+						}
 					}
 				}
 				if (pawnMoveSquareBlack >= 0 && pawnMoveSquareBlack < 64) {
 					int pawnMoveSquareY = pawnMoveSquareBlack / 8;
 					int pawnMoveSquareX = pawnMoveSquareBlack - pawnMoveSquareY * 8;
 					int maxCoordMoveDst = max(abs(x - pawnMoveSquareX), abs(y - pawnMoveSquareY));
-					if (maxCoordMoveDst == 1) {
-						Move move;
-						move.StartSquare = i;
-						move.TargetSquare = pawnMoveSquareBlack;
-						blackPawnMoves[i][j] = move;
+					if (j < 3) {
+						if (maxCoordMoveDst == 1) {
+							Move move;
+							move.StartSquare = i;
+							//cout << pawnMoveSquareWhite << endl;
+							move.TargetSquare = pawnMoveSquareBlack;
+							blackPawnMoves[i][j] = move;
+						}
+					}
+					else {
+						if (maxCoordMoveDst == 2) {
+							Move move;
+							move.StartSquare = i;
+							move.TargetSquare = pawnMoveSquareBlack;
+							blackPawnMoves[i][j] = move;
+						}
 					}
 				}
 			}
@@ -133,14 +154,15 @@ public:
 					}
 				}
 			}
-
-			
 		}
 	}
 	void createPieces(int *types, int *side) {
 		for (int i = 0; i < 64; i++) {
 			spaces[i].piece.type = types[i];
 			spaces[i].piece.side = side[i];
+			if (spaces[i].piece.type == 1) {
+				spaces[i].piece.flags.pawnDoubleMove = true;
+			}
 		}
 	}
 	void createBoard() {
