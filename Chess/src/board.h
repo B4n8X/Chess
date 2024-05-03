@@ -30,7 +30,6 @@ public:
 
 class board {
 public:
-	MoveGenerator mg;
 	boardSpace spaces[64];
 	int numSquaresToEdge[64][8];
 	Move kingMoves[64][8];
@@ -57,75 +56,7 @@ public:
 	int gameResult() {
 		return 1;
 	}
-	std::list<Move> getLegalActions(board Board) {
-		std::list<Move> actions;
-		for (int i = 0; i < 64; i++) {
-			Piece piece = Board.spaces[i].piece;
-			switch (piece.type)
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				std::list<Move> moves = mg.generatePawnMoves(Board, i, piece);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			case 2:
-			{
-				std::list<Move> moves = mg.generateKingMoves(Board, i, piece);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			case 3:
-			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			case 4:
-			{
-				std::list<Move> moves = mg.generateKnightMoves(Board, i, piece);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			case 5:
-			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			case 6:
-			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
-				for (int i = 0; i < moves.size(); i++) {
-					actions.push_back(moves.back());
-					moves.pop_back();
-				}
-				break;
-			}
-			default:
-				break;
-			}
-
-		}
-		return actions;
-	}
+	
 	void PrecomputeMoves() {
 		for (int i = 0; i < 64; i++) {
 			int y = i / 8;
