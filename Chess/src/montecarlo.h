@@ -4,21 +4,27 @@ private:
 	MoveGenerator mg;
 	board State;
 	int parentAction;
-	double score;
 	int numberOfVisits = 0;
 	MCTS_Node* nodeParent;
 	Move nodeParentMove;
 	std::list<MCTS_Node> nodeChildren;
 	std::list<Move> untried_Actions;
-	int results[2];
+	/*
+	0 - Wins
+	1 - Losses
+	*/
+	int results[2] = { 0, 0 };
 	
 public:
 	MCTS_Node() {}
 	MCTS_Node(MCTS_Node* parent, board state, Move parentMove);
 	//MCTS_Node(MCTS_Node *parent, board state);
 	//~MCTS_Node();
-	
-	int gameResult() {
+	bool isGameOver(board state) {
+
+		return false;
+	}
+	int gameResult(board state) {
 		return 1;
 	}
 	std::list<Move> getLegalActions(board Board) {
@@ -91,47 +97,67 @@ public:
 		return actions;
 	}
 
-	void bestAction(board Board, int simCount) {
+	MCTS_Node bestAction(board Board, int simCount) {
 		for (int i = 0; i < simCount; i++) {
-			//getLegalActions(Board);
+			cout << "ching";
+			MCTS_Node v = treePolicy(Board);
+			
+			int reward = v.rollout(Board);
+			v.backpropagate(reward);
 		}
-		
-		return;
+		return bestChild();
 	}
-	void treePolicy() {
-		return;
+	MCTS_Node treePolicy(board state) {
+		MCTS_Node currentNode;
+		while (!isTerminalNode(state)) {
+			if (!isFullyExpanded()) {
+				return expand(state);
+			}
+			else {
+				cout << "chong";
+				currentNode = bestChild();
+			}
+		}
+		return currentNode;
 	}
 	Move rolloutPolicy(std::list<Move> moves) {
 		return moves.back();
 	}
-	void bestChild(float c_param = 0.1f) {
-		std::vector<MCTS_Node> choicesWeights;
-		for (int i = 0; nodeChildren.size(); i++) {
-			break;
+	MCTS_Node bestChild(float c_param = 0.1f) {
+		
+		if (nodeChildren.empty()) return MCTS_Node();
+		double uct, max = -1;
+		MCTS_Node argmax;
+		for (auto child : nodeChildren) {
+			double winrate = child.q() / child.n();
+			uct = winrate + c_param * sqrt(2 * log(child.n())) / child.n();
+			if (uct > max) {
+				max = uct;
+				argmax = child;
+			}
 		}
-		return;
+		return argmax;
 	}
 	bool isFullyExpanded(){
 		return untried_Actions.size() == 0;
 	}
 	void backpropagate(int result) {
 		numberOfVisits += 1;
-		results[result] += 1;
+		//results[result] += 1;
 		if (nodeParent) {
 			nodeParent->backpropagate(result);
 		}
 	}
 	int rollout(board state) {
-		board currentRolloutState = state;
-		while (!currentRolloutState.isGameOver()) {
+		while (!isGameOver(state)) {
 			std::list<Move> possibleMoves = getLegalActions(state);
 			Move action = rolloutPolicy(possibleMoves);
 			state.move(action);
 		}
-		return state.gameResult();
+		return gameResult(state);
 	}
 	bool isTerminalNode(board state) {
-		return state.isGameOver();
+		return isGameOver(state);
 	}
 	MCTS_Node expand(board Board) {
 		Move action = untried_Actions.back();

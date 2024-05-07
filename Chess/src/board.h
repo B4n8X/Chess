@@ -47,14 +47,9 @@ public:
 		-9,
 	};
 	bool whitesTurn = true;
-	bool isGameOver() {
-		return false;
-	}
+	
 	void move(Move move) {
 		return;
-	}
-	int gameResult() {
-		return 1;
 	}
 	
 	void PrecomputeMoves() {

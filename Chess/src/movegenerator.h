@@ -7,7 +7,7 @@ public:
 	std::list<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
 		std::list<Move> m;
 
-		cout << "From: " << startSquare << " \n";
+		//cout << "From: " << startSquare << " \n";
 
 		for (int n = 0; n < 4; n++) {
 			int targetSquare;
@@ -30,7 +30,7 @@ public:
 						if (targetSquarePiece.side == 2) {
 							continue;
 						}
-						cout << "Cornerere to: " << targetSquare << " \n";
+						//cout << "Corner: " << targetSquare << " \n";
 						Move move;
 						move.StartSquare = startSquare;
 						move.TargetSquare = targetSquare;
@@ -40,7 +40,7 @@ public:
 				}
 				if(targetSquarePiece.type == 0){
 					
-					cout << "Not cornerer to: " << targetSquare << " \n";
+					//cout << "Not corner: " << targetSquare << " \n";
 					Move move;
 					move.StartSquare = startSquare;
 					move.TargetSquare = targetSquare;

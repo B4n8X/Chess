@@ -55,7 +55,14 @@ int main(void)
         
         chessBoard.drawBoard();
         chessBoard.drawPieces();
-        montecarlo.bestAction(chessBoard, cfg.simCount);
+        if (chessBoard.whitesTurn) {
+            montecarlo.bestAction(chessBoard, cfg.simCount);
+            chessBoard.whitesTurn = false;
+        }
+        else {
+            //minmax
+            chessBoard.whitesTurn = true;
+        }
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
