@@ -7,8 +7,8 @@ private:
 	int numberOfVisits = 0;
 	MCTS_Node* nodeParent;
 	Move nodeParentMove;
-	std::list<MCTS_Node> nodeChildren;
-	std::list<Move> untried_Actions;
+	std::vector<MCTS_Node> nodeChildren;
+	std::vector<Move> untried_Actions;
 	/*
 	0 - Wins
 	1 - Losses
@@ -27,8 +27,8 @@ public:
 	int gameResult(board state) {
 		return 1;
 	}
-	std::list<Move> getLegalActions(board Board) {
-		std::list<Move> actions;
+	std::vector<Move> getLegalActions(board Board) {
+		std::vector<Move> actions;
 		for (int i = 0; i < 64; i++) {
 			Piece piece = Board.spaces[i].piece;
 			switch (piece.type)
@@ -37,7 +37,7 @@ public:
 				continue;
 			case 1:
 			{
-				std::list<Move> moves = mg.generatePawnMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generatePawnMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -46,7 +46,7 @@ public:
 			}
 			case 2:
 			{
-				std::list<Move> moves = mg.generateKingMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generateKingMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -55,7 +55,7 @@ public:
 			}
 			case 3:
 			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -64,7 +64,7 @@ public:
 			}
 			case 4:
 			{
-				std::list<Move> moves = mg.generateKnightMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generateKnightMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -73,7 +73,7 @@ public:
 			}
 			case 5:
 			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -82,7 +82,7 @@ public:
 			}
 			case 6:
 			{
-				std::list<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -122,7 +122,7 @@ public:
 		}
 		return currentNode;
 	}
-	Move rolloutPolicy(std::list<Move> moves) {
+	Move rolloutPolicy(std::vector<Move> moves) {
 		return moves.back();
 	}
 	MCTS_Node bestChild(float c_param = 0.1f) {
@@ -152,7 +152,7 @@ public:
 	}
 	int rollout(board state) {
 		while (!isGameOver(state)) {
-			std::list<Move> possibleMoves = getLegalActions(state);
+			std::vector<Move> possibleMoves = getLegalActions(state);
 			Move action = rolloutPolicy(possibleMoves);
 			state.move(action);
 		}
@@ -178,7 +178,7 @@ public:
 		int losses = results[1];
 		return wins - losses;
 	}
-	std::list<Move> untriedActions(board state) {
+	std::vector<Move> untriedActions(board state) {
 		untried_Actions = getLegalActions(state);
 		return untried_Actions;
 	}

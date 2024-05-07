@@ -4,8 +4,8 @@ private:
 		return false;
 	}
 public:
-	std::list<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
-		std::list<Move> m;
+	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
+		std::vector<Move> m;
 
 		//cout << "From: " << startSquare << " \n";
 
@@ -52,8 +52,8 @@ public:
 		}
 		return m;
 	}
-	std::list<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir) {
-		std::list<Move> m;
+	std::vector<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir) {
+		std::vector<Move> m;
 		for (int directionIndex = startDir; directionIndex < endDir; directionIndex++) {
 			for (int n = 0; n < Board.numSquaresToEdge[startSquare][directionIndex]; n++) {
 				Move move;
@@ -71,8 +71,8 @@ public:
 		}
 		return m;
 	}
-	std::list<Move> generateKingMoves(board Board, int startSquare, Piece piece) {
-		std::list<Move> m;
+	std::vector<Move> generateKingMoves(board Board, int startSquare, Piece piece) {
+		std::vector<Move> m;
 		for (int n = 0; n < 8; n++) {
 			int targetSquare = Board.kingMoves[startSquare][n].TargetSquare;
 			if (targetSquare >= 0 && targetSquare < 64) {
@@ -103,8 +103,8 @@ public:
 		}
 		return m;
 	}
-	std::list<Move> generateKnightMoves(board Board, int startSquare, Piece piece) {
-		std::list<Move> m;
+	std::vector<Move> generateKnightMoves(board Board, int startSquare, Piece piece) {
+		std::vector<Move> m;
 		if (isPinned(Board, startSquare)) {
 			return m;
 		}

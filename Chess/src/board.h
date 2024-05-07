@@ -47,7 +47,9 @@ public:
 		-9,
 	};
 	bool whitesTurn = true;
-	
+	int evaluatePosition() {
+
+	}
 	void move(Move move) {
 		spaces[move.StartSquare].piece.type = 0;
 		spaces[move.StartSquare].piece.side = 2;
