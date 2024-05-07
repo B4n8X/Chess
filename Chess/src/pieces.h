@@ -30,4 +30,7 @@ public:
 
 	};
 	Flags flags;
+	void resetFlags() {
+		return;
+	}
 };

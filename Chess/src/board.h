@@ -49,6 +49,39 @@ public:
 	bool whitesTurn = true;
 	
 	void move(Move move) {
+		spaces[move.StartSquare].piece.type = 0;
+		spaces[move.StartSquare].piece.side = 2;
+		spaces[move.StartSquare].piece.resetFlags();
+		switch (move.flag) {
+		case 3:
+			spaces[move.TargetSquare].piece.type = 6;
+		case 4:
+			spaces[move.TargetSquare].piece.type = 4;
+		case 5:
+			spaces[move.TargetSquare].piece.type = 5;
+		case 6:
+			spaces[move.TargetSquare].piece.type = 3;
+		default:
+			spaces[move.TargetSquare].piece.type = spaces[move.StartSquare].piece.type;
+		}
+		spaces[move.TargetSquare].piece.side = spaces[move.StartSquare].piece.side;
+		return;
+	}
+	void undoMove(Move move) {
+		spaces[move.TargetSquare].piece.type = 0;
+		spaces[move.TargetSquare].piece.side = 2;
+		spaces[move.TargetSquare].piece.resetFlags();
+		if (move.flag == 3
+			|| move.flag == 4
+			|| move.flag == 5
+			|| move.flag == 6)
+		{
+			spaces[move.StartSquare].piece.type = 1;
+		}
+		else {
+			spaces[move.StartSquare].piece.type = spaces[move.TargetSquare].piece.type;
+		}
+		spaces[move.StartSquare].piece.side = spaces[move.TargetSquare].piece.side;
 		return;
 	}
 	

@@ -134,13 +134,14 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="players.h" />
     <ClInclude Include="src\board.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\minimax.h" />
     <ClInclude Include="src\montecarlo.h" />
     <ClInclude Include="src\move.h" />
     <ClInclude Include="src\movegenerator.h" />
     <ClInclude Include="src\pieces.h" />
+    <ClInclude Include="src\players.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

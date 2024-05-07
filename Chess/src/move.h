@@ -13,4 +13,6 @@ public:
 	* 7 = PawnTwoForward
 	*/
 	int flag;
+	bool rightCastling;
+	
 };

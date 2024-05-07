@@ -10,10 +10,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #include "config.h"
+#include "players.h"
 #include "move.h"
 #include "board.h"
 #include "movegenerator.h"
 #include "montecarlo.h"
+#include "minimax.h"
 
 using namespace std;
 
@@ -56,7 +58,7 @@ int main(void)
         chessBoard.drawBoard();
         chessBoard.drawPieces();
         if (chessBoard.whitesTurn) {
-            montecarlo.bestAction(chessBoard, cfg.simCount);
+            //montecarlo.bestAction(chessBoard, cfg.simCount);
             chessBoard.whitesTurn = false;
         }
         else {
