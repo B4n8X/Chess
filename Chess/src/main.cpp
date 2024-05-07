@@ -25,6 +25,7 @@ MCTS_Node::MCTS_Node(MCTS_Node *parent, board state, Move parentMove) : nodePare
 int main(void)
 {
     MCTS_Node montecarlo;
+    Minimax minimax;
    
     config cfg;
     board chessBoard;
@@ -59,10 +60,12 @@ int main(void)
         chessBoard.drawPieces();
         if (chessBoard.whitesTurn) {
             //montecarlo.bestAction(chessBoard, cfg.simCount);
+            chessBoard.move(move);
             chessBoard.whitesTurn = false;
         }
         else {
-            //minmax
+            Move move = minimax.bestMove(chessBoard);
+            chessBoard.move(move);
             chessBoard.whitesTurn = true;
         }
         /* Swap front and back buffers */

@@ -68,7 +68,6 @@ public:
 			default:
 				break;
 			}
-
 		}
 		return actions;
 	}

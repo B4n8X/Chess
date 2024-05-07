@@ -3,7 +3,7 @@ class MCTS_Node {
 private:
 	MoveGenerator mg;
 	board State;
-	int parentAction;
+	Move parentAction;
 	int numberOfVisits = 0;
 	MCTS_Node* nodeParent;
 	Move nodeParentMove;
@@ -105,7 +105,9 @@ public:
 			int reward = v.rollout(Board);
 			v.backpropagate(reward);
 		}
-		return bestChild();
+		MCTS_Node best = bestChild();
+
+		return best;
 	}
 	MCTS_Node treePolicy(board state) {
 		MCTS_Node currentNode;
