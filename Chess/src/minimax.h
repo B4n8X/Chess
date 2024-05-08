@@ -78,10 +78,13 @@ public:
 		legalMoves = getLegalActions(state);
 		int bestUtil = -999;
 		for (int i = 0; i < legalMoves.size(); i++) {
+			
 			Move move = legalMoves.back();
 			legalMoves.pop_back();
 			state.move(move);
+			
 			int util = -Search(state, -999, 999, 4);
+
 			state.undoMove(move);
 			if (util > bestUtil) {
 				bestUtil = util;
@@ -91,16 +94,18 @@ public:
 			else if (util == bestUtil) {
 				bestMoves.push_back(move);
 			}
-
-			return bestMoves.at(rand() % bestMoves.size());
 		}
+		Move best = bestMoves.at(rand() % bestMoves.size());
+		cout << "From: " << best.StartSquare << endl;
+		cout << "To: " << best.TargetSquare << endl;
+		return best;
 	}
 	int Search(board state, int alpha, int beta, int level) {
 		std::vector<Move> legalMoves;
 		legalMoves = getLegalActions(state);
 
 		if (level == 0) {
-			state.evaluatePosition();
+			return state.evaluatePosition(legalMoves, legalMoves);
 		}
 
 		int bestUtil = -999;

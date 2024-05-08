@@ -4,7 +4,7 @@ private:
 		return false;
 	}
 public:
-	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece, int side) {
+	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
 		std::vector<Move> m;
 
 		//cout << "From: " << startSquare << " \n";

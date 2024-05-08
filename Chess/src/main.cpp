@@ -58,7 +58,11 @@ int main(void)
         
         chessBoard.drawBoard();
         chessBoard.drawPieces();
-        if (chessBoard.whitesTurn) {
+        
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        if (!chessBoard.whitesTurn) {
             /*Move move;
             move = montecarlo.bestAction(chessBoard, cfg.simCount);
             chessBoard.move(move);*/
@@ -69,10 +73,6 @@ int main(void)
             chessBoard.move(move);
             chessBoard.whitesTurn = true;
         }
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-
 
         /* Poll for and process events */
         glfwPollEvents();

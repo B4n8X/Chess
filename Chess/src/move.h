@@ -12,7 +12,7 @@ public:
 	* 6 = PromotionToBishop
 	* 7 = PawnTwoForward
 	*/
-	int flag;
+	int flag = 0;
 	bool rightCastling;
 	
 };

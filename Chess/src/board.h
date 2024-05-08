@@ -48,13 +48,16 @@ public:
 	};
 	bool whitesTurn = true;
 	int sumMaterial(int side) {
-		int sum;
+		int sum = NULL;
 		for (int i = 0; i < 64; i++) {
 			if (spaces[i].piece.type != 0) {
 				if (spaces[i].piece.side == side) {
 					switch (spaces[i].piece.type) {
 					case 1:
 						sum += 1;
+						break;
+					case 2:
+						sum += 999;
 						break;
 					case 3:
 						sum += 3;
@@ -81,22 +84,25 @@ public:
 		return (((whiteMoves.size() - blackMoves.size()) + 100) * materialBalance());
 	}
 	void move(Move move) {
+		spaces[move.TargetSquare].piece = spaces[move.StartSquare].piece;
 		spaces[move.StartSquare].piece.type = 0;
 		spaces[move.StartSquare].piece.side = 2;
 		spaces[move.StartSquare].piece.resetFlags();
+		//cout << "New type: " << spaces[move.TargetSquare].piece.type << endl;
 		switch (move.flag) {
 		case 3:
 			spaces[move.TargetSquare].piece.type = 6;
+			break;
 		case 4:
 			spaces[move.TargetSquare].piece.type = 4;
+			break;
 		case 5:
 			spaces[move.TargetSquare].piece.type = 5;
+			break;
 		case 6:
 			spaces[move.TargetSquare].piece.type = 3;
-		default:
-			spaces[move.TargetSquare].piece.type = spaces[move.StartSquare].piece.type;
+			break;
 		}
-		spaces[move.TargetSquare].piece.side = spaces[move.StartSquare].piece.side;
 		return;
 	}
 	void undoMove(Move move) {
