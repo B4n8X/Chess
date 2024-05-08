@@ -99,6 +99,10 @@ public:
 		std::vector<Move> legalMoves;
 		legalMoves = getLegalActions(state);
 
+		if (level == 0) {
+			state.evaluatePosition();
+		}
+
 		int bestUtil = -999;
 		for (int i = 0; i < legalMoves.size(); i++) {
 			if (bestUtil >= beta) {

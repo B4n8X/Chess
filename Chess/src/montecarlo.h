@@ -97,7 +97,8 @@ public:
 		return actions;
 	}
 
-	MCTS_Node bestAction(board Board, int simCount) {
+	Move bestAction(board Board, int simCount) {
+		/*Move best;
 		for (int i = 0; i < simCount; i++) {
 			cout << "ching";
 			MCTS_Node v = treePolicy(Board);
@@ -106,8 +107,7 @@ public:
 			v.backpropagate(reward);
 		}
 		MCTS_Node best = bestChild();
-
-		return best;
+		return best;*/
 	}
 	MCTS_Node treePolicy(board state) {
 		MCTS_Node currentNode;

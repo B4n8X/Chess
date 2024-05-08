@@ -59,9 +59,9 @@ int main(void)
         chessBoard.drawBoard();
         chessBoard.drawPieces();
         if (chessBoard.whitesTurn) {
-            Move move;
-            //move = montecarlo.bestAction(chessBoard, cfg.simCount);
-            chessBoard.move(move);
+            /*Move move;
+            move = montecarlo.bestAction(chessBoard, cfg.simCount);
+            chessBoard.move(move);*/
             chessBoard.whitesTurn = false;
         }
         else {

@@ -47,8 +47,38 @@ public:
 		-9,
 	};
 	bool whitesTurn = true;
-	int evaluatePosition() {
-
+	int sumMaterial(int side) {
+		int sum;
+		for (int i = 0; i < 64; i++) {
+			if (spaces[i].piece.type != 0) {
+				if (spaces[i].piece.side == side) {
+					switch (spaces[i].piece.type) {
+					case 1:
+						sum += 1;
+						break;
+					case 3:
+						sum += 3;
+						break;
+					case 4:
+						sum += 3;
+						break;
+					case 5:
+						sum += 5;
+						break;
+					case 6:
+						sum += 9;
+						break;
+					}
+				}
+			}
+		}
+		return sum;
+	}
+	int materialBalance() {
+		return sumMaterial(1) - sumMaterial(0);
+	}
+	int evaluatePosition(std::vector<Move> whiteMoves, std::vector<Move> blackMoves) {
+		return (((whiteMoves.size() - blackMoves.size()) + 100) * materialBalance());
 	}
 	void move(Move move) {
 		spaces[move.StartSquare].piece.type = 0;
