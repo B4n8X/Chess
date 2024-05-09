@@ -26,7 +26,7 @@ public:
 	*/
 	int position[2];
 	struct Flags {
-		bool pawnDoubleMove = false;
+		bool canPawnDoubleMove = false;
 
 	};
 	Flags flags;

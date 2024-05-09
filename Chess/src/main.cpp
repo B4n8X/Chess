@@ -64,14 +64,16 @@ int main(void)
 
         if (!chessBoard.whitesTurn) {
             /*Move move;
-            move = montecarlo.bestAction(chessBoard, cfg.simCount);
+            move = montecarlo.bestAction(chessBoard, cfg.simCount, 0);
             chessBoard.move(move);*/
-            chessBoard.whitesTurn = false;
-        }
-        else {
-            Move move = minimax.bestMove(chessBoard);
+            Move move = minimax.bestMove(chessBoard, 0);
             chessBoard.move(move);
             chessBoard.whitesTurn = true;
+        }
+        else {
+            Move move = minimax.bestMove(chessBoard, 1);
+            chessBoard.move(move);
+            chessBoard.whitesTurn = false;
         }
 
         /* Poll for and process events */

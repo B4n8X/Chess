@@ -56,9 +56,7 @@ public:
 					case 1:
 						sum += 1;
 						break;
-					case 2:
-						sum += 999;
-						break;
+					
 					case 3:
 						sum += 3;
 						break;
@@ -69,7 +67,7 @@ public:
 						sum += 5;
 						break;
 					case 6:
-						sum += 9;
+						sum += 8;
 						break;
 					}
 				}
@@ -80,14 +78,19 @@ public:
 	int materialBalance() {
 		return sumMaterial(1) - sumMaterial(0);
 	}
-	int evaluatePosition(std::vector<Move> whiteMoves, std::vector<Move> blackMoves) {
-		return (((whiteMoves.size() - blackMoves.size()) + 100) * materialBalance());
+	int evaluatePosition(std::vector<Move> playerMoves, std::vector<Move> opponentMoves) {
+		return ((playerMoves.size() - opponentMoves.size()) * materialBalance());
 	}
 	void move(Move move) {
 		spaces[move.TargetSquare].piece = spaces[move.StartSquare].piece;
+		if (spaces[move.StartSquare].piece.type == 1) {
+			if (spaces[move.StartSquare].piece.flags.canPawnDoubleMove) {
+				spaces[move.StartSquare].piece.flags.canPawnDoubleMove = false;
+			}
+		}
 		spaces[move.StartSquare].piece.type = 0;
 		spaces[move.StartSquare].piece.side = 2;
-		spaces[move.StartSquare].piece.resetFlags();
+		
 		//cout << "New type: " << spaces[move.TargetSquare].piece.type << endl;
 		switch (move.flag) {
 		case 3:
@@ -237,7 +240,7 @@ public:
 			spaces[i].piece.type = types[i];
 			spaces[i].piece.side = side[i];
 			if (spaces[i].piece.type == 1) {
-				spaces[i].piece.flags.pawnDoubleMove = true;
+				spaces[i].piece.flags.canPawnDoubleMove = true;
 			}
 		}
 	}

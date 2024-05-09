@@ -3,7 +3,7 @@ private:
 	MoveGenerator mg;
 	
 public:
-	std::vector<Move> getLegalActions(board Board) {
+	std::vector<Move> getLegalActions(board Board, int side) {
 		std::vector<Move> actions;
 		for (int i = 0; i < 64; i++) {
 			Piece piece = Board.spaces[i].piece;
@@ -13,7 +13,7 @@ public:
 				continue;
 			case 1:
 			{
-				std::vector<Move> moves = mg.generatePawnMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generatePawnMoves(Board, i, piece, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -22,7 +22,7 @@ public:
 			}
 			case 2:
 			{
-				std::vector<Move> moves = mg.generateKingMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generateKingMoves(Board, i, piece, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -31,7 +31,7 @@ public:
 			}
 			case 3:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -40,7 +40,7 @@ public:
 			}
 			case 4:
 			{
-				std::vector<Move> moves = mg.generateKnightMoves(Board, i, piece);
+				std::vector<Move> moves = mg.generateKnightMoves(Board, i, piece, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -49,7 +49,7 @@ public:
 			}
 			case 5:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -58,7 +58,7 @@ public:
 			}
 			case 6:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8, side);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -71,11 +71,11 @@ public:
 		}
 		return actions;
 	}
-	Move bestMove(board Board) {
+	Move bestMove(board Board, int side) {
 		board state = Board;
 		std::vector<Move> bestMoves;
 		std::vector<Move> legalMoves;
-		legalMoves = getLegalActions(state);
+		legalMoves = getLegalActions(state, side);
 		int bestUtil = -999;
 		for (int i = 0; i < legalMoves.size(); i++) {
 			
@@ -83,7 +83,7 @@ public:
 			legalMoves.pop_back();
 			state.move(move);
 			
-			int util = -Search(state, -999, 999, 4);
+			int util = -Search(state, -999, 999, 4, side);
 
 			state.undoMove(move);
 			if (util > bestUtil) {
@@ -100,12 +100,18 @@ public:
 		cout << "To: " << best.TargetSquare << endl;
 		return best;
 	}
-	int Search(board state, int alpha, int beta, int level) {
+	int Search(board state, int alpha, int beta, int level, int side) {
 		std::vector<Move> legalMoves;
-		legalMoves = getLegalActions(state);
-
+		std::vector<Move> opponentMoves;
+		legalMoves = getLegalActions(state, side);
 		if (level == 0) {
-			return state.evaluatePosition(legalMoves, legalMoves);
+			if (side == 0) {
+				opponentMoves = getLegalActions(state, 1);
+			}
+			else if (side == 1) {
+				opponentMoves = getLegalActions(state, 0);
+			}
+			return state.evaluatePosition(legalMoves, opponentMoves);
 		}
 
 		int bestUtil = -999;
@@ -119,7 +125,7 @@ public:
 			Move move = legalMoves.back();
 			legalMoves.pop_back();
 			state.move(move);
-			int util = -Search(state, -beta, -alpha, level - 1);
+			int util = -Search(state, -beta, -alpha, level - 1, side);
 			state.undoMove(move);
 			if (util > bestUtil) {
 				bestUtil = util;
