@@ -28,12 +28,38 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
+				//Corner moves
 				else if((targetSquare-startSquare) % 8 != 0) {
 					if (targetSquarePiece.side != piece.side) {
 						if (targetSquarePiece.side == 2) {
 							continue;
 						}
 						//cout << "Corner: " << targetSquare << " \n";
+						if (piece.side == 1) {
+							if (targetSquare > 55) {
+								for (int j = 0; j < 4; j++) {
+									Move move;
+									move.StartSquare = startSquare;
+									move.TargetSquare = targetSquare;
+									move.flag = 3 + j;
+									m.push_back(move);
+								}
+								continue;
+							}
+
+						}
+						else if (piece.side == 0) {
+							if (targetSquare < 8) {
+								for (int j = 0; j < 4; j++) {
+									Move move;
+									move.StartSquare = startSquare;
+									move.TargetSquare = targetSquare;
+									move.flag = 3 + j;
+									m.push_back(move);
+								}
+								continue;
+							}
+						}
 						Move move;
 						move.StartSquare = startSquare;
 						move.TargetSquare = targetSquare;
@@ -41,6 +67,8 @@ public:
 					}
 					continue;
 				}
+
+				//Promotion moves
 				if(targetSquarePiece.type == 0){
 					if (piece.side == 1) {
 						if (targetSquare > 55) {
@@ -53,6 +81,7 @@ public:
 							}
 							continue;
 						}
+
 					}
 					else if (piece.side == 0) {
 						if (targetSquare < 8) {
@@ -66,19 +95,26 @@ public:
 							continue;
 						}
 					}
-
-					if (piece.flags.canPawnDoubleMove) {
-						piece.flags.canPawnDoubleMove = false;
+					if (targetSquare - startSquare == 16 || targetSquare - startSquare == -16) {
+						if (piece.flags.canPawnDoubleMove) {
+							Move move;
+							move.StartSquare = startSquare;
+							move.TargetSquare = targetSquare;
+							move.flag = 7;
+							m.push_back(move);
+						}
+						else {
+							continue;
+						}
 					}
 					else {
-						continue;
+						Move move;
+						move.StartSquare = startSquare;
+						move.TargetSquare = targetSquare;
+						m.push_back(move);
 					}
-					//cout << "Not corner: " << targetSquare << " \n";
-					Move move;
-					move.StartSquare = startSquare;
-					move.TargetSquare = targetSquare;
-					m.push_back(move);
 				}
+
 
 				
 			}

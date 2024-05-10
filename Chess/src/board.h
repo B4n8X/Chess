@@ -82,12 +82,10 @@ public:
 		return ((playerMoves.size() - opponentMoves.size()) * materialBalance());
 	}
 	void move(Move move) {
-		spaces[move.TargetSquare].piece = spaces[move.StartSquare].piece;
-		if (spaces[move.StartSquare].piece.type == 1) {
-			if (spaces[move.StartSquare].piece.flags.canPawnDoubleMove) {
-				spaces[move.StartSquare].piece.flags.canPawnDoubleMove = false;
-			}
+		if (move.flag == 7) {
+			spaces[move.StartSquare].piece.flags.canPawnDoubleMove = false;
 		}
+		spaces[move.TargetSquare].piece = spaces[move.StartSquare].piece;
 		spaces[move.StartSquare].piece.type = 0;
 		spaces[move.StartSquare].piece.side = 2;
 		
@@ -106,6 +104,7 @@ public:
 			spaces[move.TargetSquare].piece.type = 3;
 			break;
 		}
+
 		return;
 	}
 	void undoMove(Move move) {
