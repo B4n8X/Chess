@@ -71,11 +71,21 @@ public:
 		}
 		return actions;
 	}
-	Move bestMove(board Board, int side) {
+	Move bestMove(board Board, int side, Player white, Player black) {
 		board state = Board;
+		mg.blackPlayer = black;
+		mg.whitePlayer = white;
 		std::vector<Move> bestMoves;
 		std::vector<Move> legalMoves;
 		legalMoves = getLegalActions(state, side);
+		if (side == 1) {
+			Board.checkThreatenedSquares(legalMoves, getLegalActions(state, 0));
+		}
+		else if (side == 0) {
+			Board.checkThreatenedSquares(legalMoves, getLegalActions(state, 1));
+		}
+		
+		
 		int bestUtil = -999;
 		for (int i = 0; i < legalMoves.size(); i++) {
 			
@@ -83,7 +93,7 @@ public:
 			legalMoves.pop_back();
 			state.move(move);
 			
-			int util = -Search(state, -999, 999, 4, side);
+			int util = -Search(state, -999, 999, 5, side);
 
 			state.undoMove(move);
 			if (util > bestUtil) {

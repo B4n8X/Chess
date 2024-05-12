@@ -8,8 +8,8 @@ public:
 	int row;
 	int column;
 
-	bool underWhiteAttack;
-	bool underBlackAttack;
+	bool underWhiteAttack = false;
+	bool underBlackAttack = false;
 
 	bool isWhite = false;
 	float vertex1[2];
@@ -30,13 +30,16 @@ public:
 
 class board {
 public:
+	Player whitePlayer;
+	Player blackPlayer;
 	boardSpace spaces[64];
 	int numSquaresToEdge[64][8];
 	Move kingMoves[64][8];
 	Move knightMoves[64][8];
 	Move whitePawnMoves[64][4];
 	Move blackPawnMoves[64][4];
-	int directionOffsets[8] = { //Direction offsets for sliding pieces
+	int directionLookup[127];
+	int directionOffsets[8] = { //Direction offsets for sliding pieces (N, S, W, E, NW, SW, NE, SE)
 		8,
 		-8,
 		-1,
@@ -56,7 +59,6 @@ public:
 					case 1:
 						sum += 1;
 						break;
-					
 					case 3:
 						sum += 3;
 						break;
@@ -79,13 +81,31 @@ public:
 		return sumMaterial(1) - sumMaterial(0);
 	}
 	int evaluatePosition(std::vector<Move> playerMoves, std::vector<Move> opponentMoves) {
-		return ((playerMoves.size() - opponentMoves.size()) * materialBalance());
+		return ((playerMoves.size() - opponentMoves.size()) + 100 * materialBalance());
+	}
+	void checkThreatenedSquares(std::vector<Move> whiteMoves, std::vector<Move> blackMoves) {
+		for (int i = 0; i < whiteMoves.size(); i++) {
+			int targetSquareWhite = whiteMoves.at(i).TargetSquare;
+			for (int j = 0; j < blackMoves.size(); j++) {
+				int targetSquareBlack = blackMoves.at(j).TargetSquare;
+				spaces[targetSquareBlack].underBlackAttack = true;
+			}
+			spaces[targetSquareWhite].underWhiteAttack = true;
+		}
 	}
 	void move(Move move) {
-		if (move.flag == 7) {
+		if (spaces[move.StartSquare].piece.type == 1) {
 			spaces[move.StartSquare].piece.flags.canPawnDoubleMove = false;
 		}
 		spaces[move.TargetSquare].piece = spaces[move.StartSquare].piece;
+		if (spaces[move.StartSquare].piece.type == 2) {
+			if (spaces[move.StartSquare].piece.side == 0) {
+				blackPlayer.kingSquare = move.TargetSquare;
+			}
+			else if (spaces[move.StartSquare].piece.side == 1) {
+				whitePlayer.kingSquare = move.TargetSquare;
+			}
+		}
 		spaces[move.StartSquare].piece.type = 0;
 		spaces[move.StartSquare].piece.side = 2;
 		
@@ -108,6 +128,7 @@ public:
 		return;
 	}
 	void undoMove(Move move) {
+		spaces[move.StartSquare].piece = spaces[move.TargetSquare].piece;
 		spaces[move.TargetSquare].piece.type = 0;
 		spaces[move.TargetSquare].piece.side = 2;
 		spaces[move.TargetSquare].piece.resetFlags();
@@ -118,10 +139,6 @@ public:
 		{
 			spaces[move.StartSquare].piece.type = 1;
 		}
-		else {
-			spaces[move.StartSquare].piece.type = spaces[move.TargetSquare].piece.type;
-		}
-		spaces[move.StartSquare].piece.side = spaces[move.TargetSquare].piece.side;
 		return;
 	}
 	
@@ -144,6 +161,32 @@ public:
 			numSquaresToEdge[i][5] = min(south, east);
 			numSquaresToEdge[i][6] = min(north, east);
 			numSquaresToEdge[i][7] = min(south, west);
+
+			for (int i = 0; i < 127; i++) {
+				int offset = i - 63;
+				int absOffset = abs(offset);
+				int absDir = 1;
+				if (absOffset % 9 == 0) {
+					absDir = 9;
+				}
+				else if (absOffset % 8 == 0) {
+					absDir = 8;
+				}
+				else if (absOffset % 7 == 0) {
+					absDir = 7;
+				}
+				if (offset == 0) {
+					directionLookup[i] = absDir * 0;
+				}
+				else if (offset > 0) {
+					directionLookup[i] = absDir * 1;
+				}
+				else if (offset < 0) {
+					directionLookup[i] = absDir * -1;
+				}
+				
+			}
+
 
 			int knightMoveOffset[] = {15, 17, -17, -15, 10, 6, -6, -10};
 			//Precompute legal knight moves
@@ -240,6 +283,14 @@ public:
 			spaces[i].piece.side = side[i];
 			if (spaces[i].piece.type == 1) {
 				spaces[i].piece.flags.canPawnDoubleMove = true;
+			}
+			if (spaces[i].piece.type == 2) {
+				if (spaces[i].piece.side == 0) {
+					blackPlayer.kingSquare = i;
+				}
+				else if (spaces[i].piece.side == 1) {
+					whitePlayer.kingSquare = i;
+				}
 			}
 		}
 	}

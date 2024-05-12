@@ -26,7 +26,7 @@ int main(void)
 {
     MCTS_Node montecarlo;
     Minimax minimax;
-   
+
     config cfg;
     board chessBoard;
     chessBoard.createBoard();
@@ -66,12 +66,12 @@ int main(void)
             /*Move move;
             move = montecarlo.bestAction(chessBoard, cfg.simCount, 0);
             chessBoard.move(move);*/
-            Move move = minimax.bestMove(chessBoard, 0);
+            Move move = minimax.bestMove(chessBoard, 0, chessBoard.whitePlayer, chessBoard.blackPlayer);
             chessBoard.move(move);
             chessBoard.whitesTurn = true;
         }
         else {
-            Move move = minimax.bestMove(chessBoard, 1);
+            Move move = minimax.bestMove(chessBoard, 1, chessBoard.whitePlayer, chessBoard.blackPlayer);
             chessBoard.move(move);
             chessBoard.whitesTurn = false;
         }

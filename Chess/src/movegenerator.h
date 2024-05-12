@@ -1,10 +1,54 @@
 class MoveGenerator {
-
 private:
-	bool isPinned(board Board, int startSquare) {
+	
+	bool movingAlongDirection(board Board, int offset, int startSquare, int targetSquare) {
+		int moveDir = Board.directionLookup[targetSquare - startSquare + 63];
+		if (offset == moveDir || -offset == moveDir) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool isPinned(board Board, int startSquare, int side) {
+		int kingSquare = -1;
+		int pinnerSquare = NULL;
+		for (int i = 0; i < 8; i++) {
+			for (int n = 0; n < Board.numSquaresToEdge[startSquare][i]; n++) {
+				int targetSquare = startSquare + Board.directionOffsets[i] * (n + 1);
+				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
+				if (targetSquarePiece.type == 2 && targetSquarePiece.side == side) {
+					kingSquare = targetSquare;
+				}
+				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
+					pinnerSquare == targetSquare;
+					if (kingSquare != -1) {
+						if (movingAlongDirection(Board, Board.directionOffsets[i], kingSquare, pinnerSquare)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
 		return false;
 	}
+	bool inCheck(board Board, int side) {
+		if (side == 1) {
+			if (Board.spaces[whitePlayer.kingSquare].underBlackAttack) {
+				return true;
+			}
+			return false;
+		}
+		else if (side == 0) {
+			if (Board.spaces[blackPlayer.kingSquare].underWhiteAttack) {
+				return true;
+			}
+			return false;
+		}
+	}
 public:
+	Player whitePlayer;
+	Player blackPlayer;
 	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece, int side) {
 		std::vector<Move> m;
 		if (piece.side != side) {
@@ -28,7 +72,7 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
-				//Corner moves
+				//Corner moves (Attacking moves)
 				else if((targetSquare-startSquare) % 8 != 0) {
 					if (targetSquarePiece.side != piece.side) {
 						if (targetSquarePiece.side == 2) {
@@ -68,8 +112,9 @@ public:
 					continue;
 				}
 
-				//Promotion moves
+				
 				if(targetSquarePiece.type == 0){
+					//Promotion moves
 					if (piece.side == 1) {
 						if (targetSquare > 55) {
 							for (int j = 0; j < 4; j++) {
@@ -95,13 +140,34 @@ public:
 							continue;
 						}
 					}
+					//Standard moves
 					if (targetSquare - startSquare == 16 || targetSquare - startSquare == -16) {
 						if (piece.flags.canPawnDoubleMove) {
-							Move move;
-							move.StartSquare = startSquare;
-							move.TargetSquare = targetSquare;
-							move.flag = 7;
-							m.push_back(move);
+							if (side == 1 && startSquare < 56) {
+								if (Board.spaces[startSquare + 8].piece.type == 0) {
+									Move move;
+									move.StartSquare = startSquare;
+									move.TargetSquare = targetSquare;
+									move.flag = 7;
+									m.push_back(move);
+								}
+								else {
+									continue;
+								}
+							}
+							else if (side == 0 && startSquare > 7) {
+								if (Board.spaces[startSquare - 8].piece.type == 8) {
+									Move move;
+									move.StartSquare = startSquare;
+									move.TargetSquare = targetSquare;
+									move.flag = 7;
+									m.push_back(move);
+								}
+								else {
+									continue;
+								}
+							}
+							
 						}
 						else {
 							continue;
@@ -114,11 +180,7 @@ public:
 						m.push_back(move);
 					}
 				}
-
-
-				
 			}
-			
 		}
 		return m;
 	}
@@ -127,7 +189,21 @@ public:
 		if (piece.side != side) {
 			return m;
 		}
+		if (inCheck(Board, side) && isPinned(Board, startSquare, side)) {
+			return m;
+		}
 		for (int directionIndex = startDir; directionIndex < endDir; directionIndex++) {
+			if (side == 1) {
+				if (isPinned(Board, startSquare, side) && !movingAlongDirection(Board, Board.directionOffsets[directionIndex], startSquare, whitePlayer.kingSquare)) {
+					continue;
+				}
+			}
+			else if (side == 0) {
+				if (isPinned(Board, startSquare, side) && !movingAlongDirection(Board, Board.directionOffsets[directionIndex], startSquare, blackPlayer.kingSquare)) {
+					continue;
+				}
+			}
+			
 			for (int n = 0; n < Board.numSquaresToEdge[startSquare][directionIndex]; n++) {
 				Move move;
 				int targetSquare = startSquare + Board.directionOffsets[directionIndex] * (n + 1);
@@ -136,9 +212,12 @@ public:
 					break;
 				}
 				if (targetSquarePiece.type != 0) {
-					n = Board.numSquaresToEdge[startSquare][directionIndex];
+					move.StartSquare = startSquare;
+					move.TargetSquare = targetSquare;
+					m.push_back(move);
+					break;
 				}
-				bool isCapture = targetSquarePiece.type != 0;
+				
 				move.StartSquare = startSquare;
 				move.TargetSquare = targetSquare;
 				//cout << "Square: " << targetSquare;
@@ -152,6 +231,7 @@ public:
 		if (piece.side != side) {
 			return m;
 		}
+		
 		for (int n = 0; n < 8; n++) {
 			int targetSquare = Board.kingMoves[startSquare][n].TargetSquare;
 			if (targetSquare >= 0 && targetSquare < 64) {
@@ -160,7 +240,6 @@ public:
 					continue;
 				}
 				
-				bool isCapture = piece.side != targetSquarePiece.side;
 				if (piece.side == 1) {
 					if (!Board.spaces[targetSquare].underBlackAttack) {
 						Move move;
@@ -187,7 +266,7 @@ public:
 		if (piece.side != side) {
 			return m;
 		}
-		if (isPinned(Board, startSquare)) {
+		if (isPinned(Board, startSquare, side)) {
 			return m;
 		}
 		//cout << "From: " << startSquare << " \n";

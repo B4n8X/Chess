@@ -18,19 +18,13 @@ public:
 	2 = Empty
 	*/
 	int side = 2;
-	/*
-	Position:
-	(column, row)
-	column = 0-8
-	row = 0-8
-	*/
-	int position[2];
 	struct Flags {
 		bool canPawnDoubleMove = false;
-
+		
 	};
 	Flags flags;
 	void resetFlags() {
+		flags.canPawnDoubleMove = false;
 		return;
 	}
 };
