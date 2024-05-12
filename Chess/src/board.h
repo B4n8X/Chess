@@ -4,6 +4,7 @@ using namespace std;
 class boardSpace {
 public:
 	Piece piece;
+	
 	int index;
 	int row;
 	int column;
@@ -50,6 +51,57 @@ public:
 		-9,
 	};
 	bool whitesTurn = true;
+	bool movingAlongDirection(int offset, int startSquare, int targetSquare) {
+		int moveDir = directionLookup[targetSquare - startSquare + 63];
+		if (offset == moveDir || -offset == moveDir) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool isPinned(int startSquare, int side) {
+		int kingSquare = -1;
+		int pinnerSquare = NULL;
+		for (int i = 0; i < 8; i++) {
+			for (int n = 0; n < numSquaresToEdge[startSquare][i]; n++) {
+				int targetSquare = startSquare + directionOffsets[i] * (n + 1);
+				Piece targetSquarePiece = spaces[targetSquare].piece;
+				if (targetSquarePiece.type == 2 && targetSquarePiece.side == side) {
+					kingSquare = targetSquare;
+				}
+				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
+					pinnerSquare == targetSquare;
+					if (kingSquare != -1) {
+						if (movingAlongDirection(directionOffsets[i], kingSquare, pinnerSquare)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	bool inCheck(int side) {
+		if (side == 1) {
+			if (spaces[whitePlayer.kingSquare].underBlackAttack) {
+				return true;
+			}
+			return false;
+		}
+		else if (side == 0) {
+			if (spaces[blackPlayer.kingSquare].underWhiteAttack) {
+				return true;
+			}
+			return false;
+		}
+	}
+	bool checkForMate(int side, std::vector<Move> moves) {
+		if (inCheck(side) && moves.size() == 0) {
+			return true;
+		}
+		return false;
+	}
 	int sumMaterial(int side) {
 		int sum = NULL;
 		for (int i = 0; i < 64; i++) {

@@ -1,51 +1,4 @@
 class MoveGenerator {
-private:
-	
-	bool movingAlongDirection(board Board, int offset, int startSquare, int targetSquare) {
-		int moveDir = Board.directionLookup[targetSquare - startSquare + 63];
-		if (offset == moveDir || -offset == moveDir) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	bool isPinned(board Board, int startSquare, int side) {
-		int kingSquare = -1;
-		int pinnerSquare = NULL;
-		for (int i = 0; i < 8; i++) {
-			for (int n = 0; n < Board.numSquaresToEdge[startSquare][i]; n++) {
-				int targetSquare = startSquare + Board.directionOffsets[i] * (n + 1);
-				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-				if (targetSquarePiece.type == 2 && targetSquarePiece.side == side) {
-					kingSquare = targetSquare;
-				}
-				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
-					pinnerSquare == targetSquare;
-					if (kingSquare != -1) {
-						if (movingAlongDirection(Board, Board.directionOffsets[i], kingSquare, pinnerSquare)) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-	bool inCheck(board Board, int side) {
-		if (side == 1) {
-			if (Board.spaces[whitePlayer.kingSquare].underBlackAttack) {
-				return true;
-			}
-			return false;
-		}
-		else if (side == 0) {
-			if (Board.spaces[blackPlayer.kingSquare].underWhiteAttack) {
-				return true;
-			}
-			return false;
-		}
-	}
 public:
 	Player whitePlayer;
 	Player blackPlayer;
@@ -189,17 +142,17 @@ public:
 		if (piece.side != side) {
 			return m;
 		}
-		if (inCheck(Board, side) && isPinned(Board, startSquare, side)) {
+		if (Board.inCheck(side) && Board.isPinned(startSquare, side)) {
 			return m;
 		}
 		for (int directionIndex = startDir; directionIndex < endDir; directionIndex++) {
 			if (side == 1) {
-				if (isPinned(Board, startSquare, side) && !movingAlongDirection(Board, Board.directionOffsets[directionIndex], startSquare, whitePlayer.kingSquare)) {
+				if (Board.isPinned(startSquare, side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, whitePlayer.kingSquare)) {
 					continue;
 				}
 			}
 			else if (side == 0) {
-				if (isPinned(Board, startSquare, side) && !movingAlongDirection(Board, Board.directionOffsets[directionIndex], startSquare, blackPlayer.kingSquare)) {
+				if (Board.isPinned(startSquare, side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, blackPlayer.kingSquare)) {
 					continue;
 				}
 			}
@@ -239,6 +192,16 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
+				if (side == 1) {
+					if (Board.spaces[targetSquare].underBlackAttack) {
+						continue;
+					}
+				}
+				else if (side == 0) {
+					if (Board.spaces[targetSquare].underWhiteAttack) {
+						continue;
+					}
+				}
 				
 				if (piece.side == 1) {
 					if (!Board.spaces[targetSquare].underBlackAttack) {
@@ -266,7 +229,7 @@ public:
 		if (piece.side != side) {
 			return m;
 		}
-		if (isPinned(Board, startSquare, side)) {
+		if (Board.isPinned(startSquare, side)) {
 			return m;
 		}
 		//cout << "From: " << startSquare << " \n";
@@ -274,7 +237,7 @@ public:
 			int targetSquare = Board.knightMoves[startSquare][n].TargetSquare;
 			if (targetSquare >= 0 && targetSquare < 64) {
 				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-				if (piece.side == targetSquarePiece.side) /*OR IF IN CHECK AND KNIGHT IS NOT BLOCKING CHECK OR CAPTURING CHECKING PIECE(ADD PLAYER.H WITH PLAYER STATUS OR UNDER BOARD ADD PLAYERTURNS AND STATUSES, LIKE A STRUCT)*/ {
+				if (piece.side == targetSquarePiece.side || Board.inCheck(side)){ /*OR IF IN CHECK AND KNIGHT IS NOT BLOCKING CHECK OR CAPTURING CHECKING PIECE(ADD PLAYER.H WITH PLAYER STATUS OR UNDER BOARD ADD PLAYERTURNS AND STATUSES, LIKE A STRUCT)*/
 					continue;
 				}
 				//cout << "to: " << targetSquare << " \n";

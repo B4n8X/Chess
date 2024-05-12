@@ -114,13 +114,13 @@ public:
 		std::vector<Move> legalMoves;
 		std::vector<Move> opponentMoves;
 		legalMoves = getLegalActions(state, side);
+		if (side == 0) {
+			opponentMoves = getLegalActions(state, 1);
+		}
+		else if (side == 1) {
+			opponentMoves = getLegalActions(state, 0);
+		}
 		if (level == 0) {
-			if (side == 0) {
-				opponentMoves = getLegalActions(state, 1);
-			}
-			else if (side == 1) {
-				opponentMoves = getLegalActions(state, 0);
-			}
 			return state.evaluatePosition(legalMoves, opponentMoves);
 		}
 
@@ -134,6 +134,18 @@ public:
 			}
 			Move move = legalMoves.back();
 			legalMoves.pop_back();
+			if (side == 1) {
+				if (state.checkForMate(0, opponentMoves)) {
+					return 900 + level;
+				}
+			}
+			else if (side == 0) {
+				if (state.checkForMate(1, opponentMoves)) {
+					return 900 + level;
+				}
+			}
+			
+			
 			state.move(move);
 			int util = -Search(state, -beta, -alpha, level - 1, side);
 			state.undoMove(move);
