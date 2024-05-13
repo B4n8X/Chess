@@ -74,7 +74,7 @@ public:
 					kingSquare = targetSquare;
 				}
 				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
-					pinnerSquare == targetSquare;
+					pinnerSquare = targetSquare;
 					if (kingSquare != NULL) {
 						if (movingAlongDirection(directionOffsets[i], kingSquare, pinnerSquare)) {
 							return true;
@@ -182,7 +182,6 @@ public:
 			spaces[move.TargetSquare].piece.type = 3;
 			break;
 		}
-
 		return;
 	}
 	void undoMove(Move move) {
