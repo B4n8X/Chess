@@ -14,17 +14,12 @@
 #include "move.h"
 #include "board.h"
 #include "movegenerator.h"
-#include "montecarlo.h"
 #include "minimax.h"
 
 using namespace std;
 
-MCTS_Node::MCTS_Node(MCTS_Node *parent, board state, Move parentMove) : nodeParent(parent), State(state), nodeParentMove(parentMove)  {
-}
-
 int main(void)
 {
-    MCTS_Node montecarlo;
     Minimax minimax;
 
     config cfg;

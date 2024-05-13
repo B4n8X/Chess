@@ -25,6 +25,7 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
+
 				//Corner moves (Attacking moves)
 				else if((targetSquare-startSquare) % 8 != 0) {
 					if (targetSquarePiece.side != piece.side) {
@@ -69,6 +70,11 @@ public:
 				if(targetSquarePiece.type == 0){
 					//Promotion moves
 					if (piece.side == 1) {
+						if (targetSquare - startSquare == 16) {
+							if (!piece.flags.canPawnDoubleMove || Board.spaces[startSquare + 8].piece.type != 0) {
+								continue;
+							}
+						}
 						if (targetSquare > 55) {
 							for (int j = 0; j < 4; j++) {
 								Move move;
@@ -79,9 +85,13 @@ public:
 							}
 							continue;
 						}
-
 					}
 					else if (piece.side == 0) {
+						if (targetSquare - startSquare == -16) {
+							if (!piece.flags.canPawnDoubleMove || Board.spaces[startSquare - 8].piece.type != 0) {
+								continue;
+							}
+						}
 						if (targetSquare < 8) {
 							for (int j = 0; j < 4; j++) {
 								Move move;
@@ -164,17 +174,22 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					break;
 				}
-				if (targetSquarePiece.type != 0) {
+				
+				if (Board.squareInCheckRay(targetSquare, side) || !Board.inCheck(side)){
+					if (targetSquarePiece.type != 0) {
+						move.StartSquare = startSquare;
+						move.TargetSquare = targetSquare;
+						m.push_back(move);
+						break;
+					}
+
 					move.StartSquare = startSquare;
 					move.TargetSquare = targetSquare;
+					//cout << "Square: " << targetSquare;
 					m.push_back(move);
-					break;
 				}
-				
-				move.StartSquare = startSquare;
-				move.TargetSquare = targetSquare;
-				//cout << "Square: " << targetSquare;
-				m.push_back(move);
+				else {
+				}
 			}
 		}
 		return m;
@@ -237,7 +252,7 @@ public:
 			int targetSquare = Board.knightMoves[startSquare][n].TargetSquare;
 			if (targetSquare >= 0 && targetSquare < 64) {
 				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-				if (piece.side == targetSquarePiece.side || Board.inCheck(side)){ /*OR IF IN CHECK AND KNIGHT IS NOT BLOCKING CHECK OR CAPTURING CHECKING PIECE(ADD PLAYER.H WITH PLAYER STATUS OR UNDER BOARD ADD PLAYERTURNS AND STATUSES, LIKE A STRUCT)*/
+				if (piece.side == targetSquarePiece.side || Board.inCheck(side) && Board.squareInCheckRay(targetSquare, side)){
 					continue;
 				}
 				//cout << "to: " << targetSquare << " \n";

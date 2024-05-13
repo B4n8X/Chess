@@ -60,8 +60,11 @@ public:
 			return false;
 		}
 	}
+	bool squareInCheckRay(int startSquare, int side) {
+		return false;
+	}
 	bool isPinned(int startSquare, int side) {
-		int kingSquare = -1;
+		int kingSquare = NULL;
 		int pinnerSquare = NULL;
 		for (int i = 0; i < 8; i++) {
 			for (int n = 0; n < numSquaresToEdge[startSquare][i]; n++) {
@@ -72,7 +75,7 @@ public:
 				}
 				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
 					pinnerSquare == targetSquare;
-					if (kingSquare != -1) {
+					if (kingSquare != NULL) {
 						if (movingAlongDirection(directionOffsets[i], kingSquare, pinnerSquare)) {
 							return true;
 						}
@@ -110,6 +113,9 @@ public:
 					switch (spaces[i].piece.type) {
 					case 1:
 						sum += 1;
+						break;
+					case 2:
+						sum += 999;
 						break;
 					case 3:
 						sum += 3;
@@ -329,7 +335,7 @@ public:
 			}
 		}
 	}
-	void createPieces(int *types, int *side) {
+	void createPieces(const int *types, const int *side) {
 		for (int i = 0; i < 64; i++) {
 			spaces[i].piece.type = types[i];
 			spaces[i].piece.side = side[i];

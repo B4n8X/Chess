@@ -138,7 +138,6 @@
     <ClInclude Include="src\board.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\minimax.h" />
-    <ClInclude Include="src\montecarlo.h" />
     <ClInclude Include="src\move.h" />
     <ClInclude Include="src\movegenerator.h" />
     <ClInclude Include="src\pieces.h" />

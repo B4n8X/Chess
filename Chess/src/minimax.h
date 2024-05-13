@@ -106,8 +106,8 @@ public:
 			}
 		}
 		Move best = bestMoves.at(rand() % bestMoves.size());
-		cout << "From: " << best.StartSquare << endl;
-		cout << "To: " << best.TargetSquare << endl;
+		/*cout << "From: " << best.StartSquare << endl;
+		cout << "To: " << best.TargetSquare << endl;*/
 		return best;
 	}
 	int Search(board state, int alpha, int beta, int level, int side) {
@@ -123,7 +123,6 @@ public:
 		if (level == 0) {
 			return state.evaluatePosition(legalMoves, opponentMoves);
 		}
-
 		int bestUtil = -999;
 		for (int i = 0; i < legalMoves.size(); i++) {
 			if (bestUtil >= beta) {

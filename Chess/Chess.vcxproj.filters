@@ -32,9 +32,6 @@
     <ClInclude Include="src\pieces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\montecarlo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\movegenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
