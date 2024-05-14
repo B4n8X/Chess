@@ -74,7 +74,7 @@ public:
 					kingSquare = targetSquare;
 				}
 				if (targetSquarePiece.type == 3 || targetSquarePiece.type == 5 || targetSquarePiece.type == 6) {
-					pinnerSquare == targetSquare;
+					pinnerSquare = targetSquare;
 					if (kingSquare != NULL) {
 						if (movingAlongDirection(directionOffsets[i], kingSquare, pinnerSquare)) {
 							return true;
@@ -135,21 +135,27 @@ public:
 		}
 		return sum;
 	}
-	int materialBalance() {
-		return sumMaterial(1) - sumMaterial(0);
+	int materialBalance(int side) {
+		if (side == 1) {
+			return sumMaterial(1) - sumMaterial(0);
+		}
+		else if (side == 0) {
+			return sumMaterial(0) - sumMaterial(1);
+		}
+		
 	}
-	int evaluatePosition(std::vector<Move> playerMoves, std::vector<Move> opponentMoves) {
-		return ((playerMoves.size() - opponentMoves.size()) + 100 * materialBalance());
+	int evaluatePosition(int side) {
+		return materialBalance(side);
 	}
-	void checkThreatenedSquares(std::vector<Move> whiteMoves, std::vector<Move> blackMoves) {
-		for (int i = 0; i < whiteMoves.size(); i++) {
+	void checkThreatenedSquares(std::vector<Move>) {
+		/*for (int i = 0; i < whiteMoves.size(); i++) {
 			int targetSquareWhite = whiteMoves.at(i).TargetSquare;
 			for (int j = 0; j < blackMoves.size(); j++) {
 				int targetSquareBlack = blackMoves.at(j).TargetSquare;
 				spaces[targetSquareBlack].underBlackAttack = true;
 			}
 			spaces[targetSquareWhite].underWhiteAttack = true;
-		}
+		}*/
 	}
 	void move(Move move) {
 		if (spaces[move.StartSquare].piece.type == 1) {

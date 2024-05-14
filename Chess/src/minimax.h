@@ -3,7 +3,7 @@ private:
 	MoveGenerator mg;
 	
 public:
-	std::vector<Move> getLegalActions(board Board, int side) {
+	std::vector<Move> getLegalActions(board Board) {
 		std::vector<Move> actions;
 		for (int i = 0; i < 64; i++) {
 			Piece piece = Board.spaces[i].piece;
@@ -13,7 +13,7 @@ public:
 				continue;
 			case 1:
 			{
-				std::vector<Move> moves = mg.generatePawnMoves(Board, i, piece, side);
+				std::vector<Move> moves = mg.generatePawnMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -22,7 +22,7 @@ public:
 			}
 			case 2:
 			{
-				std::vector<Move> moves = mg.generateKingMoves(Board, i, piece, side);
+				std::vector<Move> moves = mg.generateKingMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -31,7 +31,7 @@ public:
 			}
 			case 3:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8, side);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 4, 8);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -40,7 +40,7 @@ public:
 			}
 			case 4:
 			{
-				std::vector<Move> moves = mg.generateKnightMoves(Board, i, piece, side);
+				std::vector<Move> moves = mg.generateKnightMoves(Board, i, piece);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -49,7 +49,7 @@ public:
 			}
 			case 5:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4, side);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 4);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -58,7 +58,7 @@ public:
 			}
 			case 6:
 			{
-				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8, side);
+				std::vector<Move> moves = mg.generateSlidingMoves(Board, i, piece, 0, 8);
 				for (int i = 0; i < moves.size(); i++) {
 					actions.push_back(moves.back());
 					moves.pop_back();
@@ -69,89 +69,85 @@ public:
 				break;
 			}
 		}
+		Board.checkThreatenedSquares(actions);
 		return actions;
 	}
-	Move bestMove(board Board, int side, Player white, Player black) {
-		board state = Board;
+	Move bestMove(board Board, int depth, Player white, Player black, bool isMaximizingPlayer, int side, int alpha, int beta) {
 		mg.blackPlayer = black;
 		mg.whitePlayer = white;
-		std::vector<Move> bestMoves;
+		Move best;
 		std::vector<Move> legalMoves;
-		legalMoves = getLegalActions(state, side);
-		if (side == 1) {
-			Board.checkThreatenedSquares(legalMoves, getLegalActions(state, 0));
-		}
-		else if (side == 0) {
-			Board.checkThreatenedSquares(legalMoves, getLegalActions(state, 1));
-		}
-		
-		
-		int bestUtil = -999;
+		int util = NULL;
+		int bestUtil = -999999;
+		legalMoves = getLegalActions(Board);
+		cout << legalMoves.size() << endl;
 		for (int i = 0; i < legalMoves.size(); i++) {
-			
-			Move move = legalMoves.back();
-			legalMoves.pop_back();
-			state.move(move);
-			
-			int util = -Search(state, -999, 999, 5, side);
+			Move move = legalMoves.at(i);
+			if(Board.spaces[move.StartSquare].piece.side == side){
+				cout << move.StartSquare << endl;
+			}
 
-			state.undoMove(move);
-			if (util > bestUtil) {
-				bestUtil = util;
-				bestMoves.clear();
-				bestMoves.push_back(move);
+			
+			Board.move(move);
+			util = Search(Board, depth-1, black, white, !isMaximizingPlayer, side, alpha, beta);
+			if (isMaximizingPlayer) {
+				if (util > bestUtil) {
+					bestUtil = util;
+					best = move;
+				}
+				alpha = max(alpha, util);
 			}
-			else if (util == bestUtil) {
-				bestMoves.push_back(move);
+			else {
+				if (util < bestUtil) {
+					bestUtil = util;
+					best = move;
+				}
+				beta = max(beta, util);
 			}
-		}
-		Move best = bestMoves.at(rand() % bestMoves.size());
-		/*cout << "From: " << best.StartSquare << endl;
-		cout << "To: " << best.TargetSquare << endl;*/
-		return best;
-	}
-	int Search(board state, int alpha, int beta, int level, int side) {
-		std::vector<Move> legalMoves;
-		std::vector<Move> opponentMoves;
-		legalMoves = getLegalActions(state, side);
-		if (side == 0) {
-			opponentMoves = getLegalActions(state, 1);
-		}
-		else if (side == 1) {
-			opponentMoves = getLegalActions(state, 0);
-		}
-		if (level == 0) {
-			return state.evaluatePosition(legalMoves, opponentMoves);
-		}
-		int bestUtil = -999;
-		for (int i = 0; i < legalMoves.size(); i++) {
-			if (bestUtil >= beta) {
+			Board.undoMove(move);
+			
+			if (beta <= alpha) {
 				break;
 			}
-			if (bestUtil > alpha) {
-				alpha = bestUtil;
-			}
-			Move move = legalMoves.back();
-			legalMoves.pop_back();
-			if (side == 1) {
-				if (state.checkForMate(0, opponentMoves)) {
-					return 900 + level;
+
+		}
+		return best;
+	}
+	int Search(board Board, int depth, Player white, Player black, bool isMaximizingPlayer, int side, int alpha, int beta) {
+		std::vector<Move>legalMoves = getLegalActions(Board);
+		depth -= 1;
+		int bestUtil = -999999;
+		if (depth == 0) {
+			int eval = Board.evaluatePosition(side);
+			return eval;
+		}
+		for (int i = 0; i < legalMoves.size(); i++) {
+			int util;
+			Move move = legalMoves.at(i);
+			Board.move(move);
+			util = Search(Board, depth, black, white, !isMaximizingPlayer, side, alpha, beta);
+			if (isMaximizingPlayer) {
+				if (util >= bestUtil) {
+					bestUtil = util;
 				}
+				alpha = max(alpha, util);
 			}
-			else if (side == 0) {
-				if (state.checkForMate(1, opponentMoves)) {
-					return 900 + level;
+			else {
+				if (util <= bestUtil) {
+					bestUtil = util;
 				}
+				beta = max(beta, util);
 			}
 			
 			
-			state.move(move);
-			int util = -Search(state, -beta, -alpha, level - 1, side);
-			state.undoMove(move);
-			if (util > bestUtil) {
-				bestUtil = util;
+			Board.undoMove(move);
+			if (beta <= alpha) {
+				break;
 			}
+			
 		}
 		return bestUtil;
+		
 	}
+		
 };

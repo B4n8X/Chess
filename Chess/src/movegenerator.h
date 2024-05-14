@@ -2,11 +2,8 @@ class MoveGenerator {
 public:
 	Player whitePlayer;
 	Player blackPlayer;
-	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece, int side) {
+	std::vector<Move> generatePawnMoves(board Board, int startSquare, Piece piece) {
 		std::vector<Move> m;
-		if (piece.side != side) {
-			return m;
-		}
 		//cout << "From: " << startSquare << " \n";
 		for (int n = 0; n < 4; n++) {
 			int targetSquare;
@@ -18,7 +15,7 @@ public:
 			else if (piece.side == 1) {
 				targetSquare = Board.whitePawnMoves[startSquare][n].TargetSquare;
 			}
-			//cout << targetSquare << endl;
+			//cout << "To: " << targetSquare << endl;
 			
 			if (targetSquare >= 0 && targetSquare < 64) {
 				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
@@ -89,6 +86,7 @@ public:
 					else if (piece.side == 0) {
 						if (targetSquare - startSquare == -16) {
 							if (!piece.flags.canPawnDoubleMove || Board.spaces[startSquare - 8].piece.type != 0) {
+								
 								continue;
 							}
 						}
@@ -100,13 +98,14 @@ public:
 								move.flag = 3 + j;
 								m.push_back(move);
 							}
+
 							continue;
 						}
 					}
 					//Standard moves
 					if (targetSquare - startSquare == 16 || targetSquare - startSquare == -16) {
 						if (piece.flags.canPawnDoubleMove) {
-							if (side == 1 && startSquare < 56) {
+							if (piece.side == 1 && startSquare < 56) {
 								if (Board.spaces[startSquare + 8].piece.type == 0) {
 									Move move;
 									move.StartSquare = startSquare;
@@ -114,55 +113,45 @@ public:
 									move.flag = 7;
 									m.push_back(move);
 								}
-								else {
-									continue;
-								}
 							}
-							else if (side == 0 && startSquare > 7) {
-								if (Board.spaces[startSquare - 8].piece.type == 8) {
+							else if (piece.side == 0 && startSquare > 7) {
+								if (Board.spaces[startSquare - 8].piece.type == 0) {
 									Move move;
 									move.StartSquare = startSquare;
 									move.TargetSquare = targetSquare;
 									move.flag = 7;
 									m.push_back(move);
 								}
-								else {
-									continue;
-								}
 							}
 							
 						}
 						else {
+							
 							continue;
 						}
 					}
-					else {
-						Move move;
-						move.StartSquare = startSquare;
-						move.TargetSquare = targetSquare;
-						m.push_back(move);
-					}
+					Move move;
+					move.StartSquare = startSquare;
+					move.TargetSquare = targetSquare;
+					m.push_back(move);
 				}
 			}
 		}
 		return m;
 	}
-	std::vector<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir, int side) {
+	std::vector<Move> generateSlidingMoves(board Board, int startSquare, Piece piece, int startDir, int endDir) {
 		std::vector<Move> m;
-		if (piece.side != side) {
-			return m;
-		}
-		if (Board.inCheck(side) && Board.isPinned(startSquare, side)) {
+		if (Board.inCheck(piece.side) && Board.isPinned(startSquare, piece.side)) {
 			return m;
 		}
 		for (int directionIndex = startDir; directionIndex < endDir; directionIndex++) {
-			if (side == 1) {
-				if (Board.isPinned(startSquare, side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, whitePlayer.kingSquare)) {
+			if (piece.side == 1) {
+				if (Board.isPinned(startSquare, piece.side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, whitePlayer.kingSquare)) {
 					continue;
 				}
 			}
-			else if (side == 0) {
-				if (Board.isPinned(startSquare, side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, blackPlayer.kingSquare)) {
+			else if (piece.side == 0) {
+				if (Board.isPinned(startSquare, piece.side) && !Board.movingAlongDirection(Board.directionOffsets[directionIndex], startSquare, blackPlayer.kingSquare)) {
 					continue;
 				}
 			}
@@ -175,7 +164,7 @@ public:
 					break;
 				}
 				
-				if (Board.squareInCheckRay(targetSquare, side) || !Board.inCheck(side)){
+				if (Board.squareInCheckRay(targetSquare, piece.side) || !Board.inCheck(piece.side)){
 					if (targetSquarePiece.type != 0) {
 						move.StartSquare = startSquare;
 						move.TargetSquare = targetSquare;
@@ -194,11 +183,8 @@ public:
 		}
 		return m;
 	}
-	std::vector<Move> generateKingMoves(board Board, int startSquare, Piece piece, int side) {
+	std::vector<Move> generateKingMoves(board Board, int startSquare, Piece piece) {
 		std::vector<Move> m;
-		if (piece.side != side) {
-			return m;
-		}
 		
 		for (int n = 0; n < 8; n++) {
 			int targetSquare = Board.kingMoves[startSquare][n].TargetSquare;
@@ -207,12 +193,12 @@ public:
 				if (piece.side == targetSquarePiece.side) {
 					continue;
 				}
-				if (side == 1) {
+				if (piece.side == 1) {
 					if (Board.spaces[targetSquare].underBlackAttack) {
 						continue;
 					}
 				}
-				else if (side == 0) {
+				else if (piece.side == 0) {
 					if (Board.spaces[targetSquare].underWhiteAttack) {
 						continue;
 					}
@@ -239,12 +225,9 @@ public:
 		}
 		return m;
 	}
-	std::vector<Move> generateKnightMoves(board Board, int startSquare, Piece piece, int side) {
+	std::vector<Move> generateKnightMoves(board Board, int startSquare, Piece piece) {
 		std::vector<Move> m;
-		if (piece.side != side) {
-			return m;
-		}
-		if (Board.isPinned(startSquare, side)) {
+		if (Board.isPinned(startSquare, piece.side)) {
 			return m;
 		}
 		//cout << "From: " << startSquare << " \n";
@@ -252,7 +235,7 @@ public:
 			int targetSquare = Board.knightMoves[startSquare][n].TargetSquare;
 			if (targetSquare >= 0 && targetSquare < 64) {
 				Piece targetSquarePiece = Board.spaces[targetSquare].piece;
-				if (piece.side == targetSquarePiece.side || Board.inCheck(side) && Board.squareInCheckRay(targetSquare, side)){
+				if (piece.side == targetSquarePiece.side || Board.inCheck(piece.side) && Board.squareInCheckRay(targetSquare, piece.side)){
 					continue;
 				}
 				//cout << "to: " << targetSquare << " \n";

@@ -58,15 +58,13 @@ int main(void)
         glfwSwapBuffers(window);
 
         if (!chessBoard.whitesTurn) {
-            /*Move move;
-            move = montecarlo.bestAction(chessBoard, cfg.simCount, 0);
-            chessBoard.move(move);*/
-            Move move = minimax.bestMove(chessBoard, 0, chessBoard.whitePlayer, chessBoard.blackPlayer);
+            Move move = minimax.bestMove(chessBoard, 2, chessBoard.whitePlayer, chessBoard.blackPlayer, false, 0, -999, 999);
             chessBoard.move(move);
             chessBoard.whitesTurn = true;
+            
         }
         else {
-            Move move = minimax.bestMove(chessBoard, 1, chessBoard.whitePlayer, chessBoard.blackPlayer);
+            Move move = minimax.bestMove(chessBoard, 2, chessBoard.whitePlayer, chessBoard.blackPlayer, true, 1, -999, 999);
             chessBoard.move(move);
             chessBoard.whitesTurn = false;
         }
